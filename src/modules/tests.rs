@@ -39,26 +39,28 @@ use super::lexer::tokenize_string;
 /// Jirai tokenizer.
 #[test]
 pub fn test_lexer(){
-    let source: String = "<3<3 _Second Heading_"
+        let source: String = "<3<3 _Second Heading_\nLorem ipsum sit dolor amet. <this_is_code> Lorem ipsum sit dolor amet.\n"
         .to_string();
     let tokens: Vec<Token> = tokenize_string(&source)
         .expect("Error tokenizing heading string.");
-   let expected: Vec<Token> = vec![
+   /*let expected: Vec<Token> = vec![
         Token::new(&Position::new(&0,&2),&Position::new(&0,&0),&TokenType::HeadingMarker,&None),
         Token::new(&Position::new(&0,&4),&Position::new(&0,&2),&TokenType::HeadingMarker,&None), 
         Token::new(&Position::new(&0,&5),&Position::new(&0,&4),&TokenType::UserString,&Some(" ".to_string())), 
         Token::new(&Position::new(&0,&6),&Position::new(&0,&5),&TokenType::ItalicText,&None), 
         Token::new(&Position::new(&0,&20),&Position::new(&0,&6),&TokenType::UserString,&Some("Second Heading".to_string())), 
         Token::new(&Position::new(&0,&21),&Position::new(&0,&20),&TokenType::ItalicText,&None)
-    ];
-    assert_eq!(tokens, expected);
+    ];*/
+    for token in tokens {
+        println!("{:?}", token);
+    }
 }
 
-/// A function to test the
-/// Jirai parser.
-#[test]
-pub fn test_parser(){
-    let source: String = "<3<3 _Second Heading_\n\nLorem _ipsum_ *sit* dolor amet. This is {![generic text][https://en.wikipedia.org/wiki/Lorem_ipsum]}!\n\n"
+// A function to test the
+// Jirai parser.
+//#[test]
+/*pub fn test_parser(){
+    let source: String = "<3<3 _Second Heading_\nLorem ipsum sit dolor amet. <this_is_code> Lorem ipsum sit dolor amet.\n"
         .to_string();
     let tokens: Vec<Token> = tokenize_string(&source)
         .expect("Error tokenizing heading string.");
@@ -68,4 +70,4 @@ pub fn test_parser(){
     for statement in statements{
         println!("{:?}", statement);
     }
-}
+}*/

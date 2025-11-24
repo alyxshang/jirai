@@ -13,9 +13,9 @@ pub enum InlineStatement{
     Text(Token),
     Link(Token, Token),
     Image(Token, Token),
-    ListItem(Vec<InlineStatement>),
-    BoldText(Box<InlineStatement>),
-    ItalicText(Box<InlineStatement>),
+    ListItem(Box<Vec<InlineStatement>>),
+    BoldText(Box<Vec<InlineStatement>>),
+    ItalicText(Box<Vec<InlineStatement>>),
 }
 pub struct Parser{
     pub cursor: usize,
@@ -110,6 +110,7 @@ impl Parser {
                 break;
             }
         }
+        println!("{:?}", level);
         if level == 0{
             return Err::<Statement, JiraiErr>(
                 JiraiErr::new(
@@ -120,7 +121,7 @@ impl Parser {
                 )
             );
         }
-        else {
+        else { 
             let mut stmt_vec: Vec<InlineStatement> = Vec::new();
             while let Some(token) = self.stream.get(self.cursor){
                 if token.token_type == TokenType::NewLine{
@@ -130,7 +131,6 @@ impl Parser {
                 else {
                     stmt_vec.push(self.parse_inline_statement()?);
                 }
-                self.advance();
             }
             Ok(Statement::Heading(stmt_vec))
         }
@@ -156,7 +156,6 @@ impl Parser {
             else {
                 stmt_vec.push(self.parse_inline_statement()?);
             }
-            self.advance();
         }
         Ok(Statement::Paragraph(stmt_vec))
     }
@@ -172,7 +171,6 @@ impl Parser {
             else {
                 stmt_vec.push(self.parse_inline_statement()?);
             }
-            self.advance();
         }
         Ok(Statement::UnorderedList(stmt_vec))
     }
@@ -192,6 +190,7 @@ impl Parser {
     pub fn parse_linked_item(
         &mut self
     ) -> Result<InlineStatement, JiraiErr>{
+        let _open_curly: Token = self.expect(&TokenType::OpenCurly)?;
         let peeked: Token = self.peek()?;
         match peeked.token_type{
             TokenType::ImageMarker => Ok(self.parse_image_item()?),
@@ -200,27 +199,62 @@ impl Parser {
                 JiraiErr::new(
                     &format!(
                         "Expected a link or image marker at position \"{}\"!", 
-                        &peeked.end.to_string()
+                        &peeked.start.to_string()
                     )
                 )
             )
         }
     }
-    /*pub fn parse_bold_text(
+    pub fn parse_bold_text(
         &mut self
     ) -> Result<InlineStatement, JiraiErr>{
-
+        let _open_bold: Token = self.expect(&TokenType::BoldText)?;
+        let mut contents: Vec<InlineStatement> = Vec::new();
+        loop {
+            let next: Token = self.peek()?;
+            if next.token_type == TokenType::BoldText{
+                break;
+            }
+            else {
+                contents.push(self.parse_inline_statement()?);
+            }
+        }
+        let _close_bold: Token = self.expect(&TokenType::BoldText)?;
+        Ok(InlineStatement::BoldText(Box::new(contents)))
     }
     pub fn parse_italic_text(
         &mut self
     ) -> Result<InlineStatement, JiraiErr>{
-
-    } 
+        let _open_italic: Token = self.expect(&TokenType::ItalicText)?;
+        let mut contents: Vec<InlineStatement> = Vec::new();
+        loop {
+            let next: Token = self.peek()?;
+            if next.token_type == TokenType::ItalicText{
+                break;
+            }
+            else {
+                contents.push(self.parse_inline_statement()?);
+            }
+        }
+        let _close_italic: Token = self.expect(&TokenType::ItalicText)?;
+        Ok(InlineStatement::ItalicText(Box::new(contents)))
+    }
     pub fn parse_list_item(
         &mut self
     ) -> Result<InlineStatement, JiraiErr>{
-
-    }*/
+        let _list_marker: Token = self.expect(&TokenType::ListMarker)?;
+        let mut contents: Vec<InlineStatement> = Vec::new();
+        loop {
+            let next: Token = self.peek()?;
+            if next.token_type == TokenType::NewLine || self.is_done(){
+                break;
+            }
+            else {
+                contents.push(self.parse_inline_statement()?);
+            }
+        }
+        Ok(InlineStatement::ListItem(Box::new(contents)))
+    }
     pub fn parse_inline_code(
         &mut self
     ) -> Result<InlineStatement, JiraiErr>{
@@ -262,5 +296,4 @@ impl Parser {
         let token: Token = self.expect(&TokenType::UserString)?;
         Ok(InlineStatement::Text(token))
     }
-
 }
