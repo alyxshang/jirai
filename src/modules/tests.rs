@@ -55,7 +55,7 @@ pub fn test_lexer(){
 /// Jirai parser.
 #[test]
 pub fn test_parser(){
-    let source: String = "<3<3 _Second Heading_\nLorem ipsum sit dolor amet. <this is code> Lorem ipsum sit dolor amet.\n"
+    let source: String = "<3<3 _Second Heading_\nLorem ipsum sit dolor amet. <this is code> Lorem ipsum sit dolor amet {![my website][https://alyxshang.boo]}.\n"
         .to_string();
     let tokens: Vec<Token> = tokenize_string(&source)
         .expect("Error tokenizing heading string.");
