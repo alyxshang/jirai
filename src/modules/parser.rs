@@ -110,7 +110,6 @@ impl Parser {
                 break;
             }
         }
-        println!("{:?}", level);
         if level == 0{
             return Err::<Statement, JiraiErr>(
                 JiraiErr::new(
