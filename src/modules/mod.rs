@@ -4,6 +4,13 @@ Licensed under the FSL v1.
 */
 
 /// Exporting the module
+/// responsible for creating
+/// an intermediate representation
+/// from a Jirai abstract syntax
+/// tree.
+pub mod ir;
+
+/// Exporting the module
 /// containing the structure
 /// to catch and handle errors.
 pub mod err;
