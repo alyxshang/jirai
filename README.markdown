@@ -7,7 +7,7 @@
 ## ABOUT :books:
 
 This repository contains the source code for a compiler for a
-text-markup language inspired by the []() aesthetic from Japan. This
+text-markup language inspired by the [Jirai Kei](https://aesthetics.fandom.com/wiki/Jirai_Kei) aesthetic from Japan. This
 compiler is in the format of a Rust crate containing functions to
 compile Jirai source code into other formats of code.
 
@@ -17,7 +17,7 @@ compile Jirai source code into other formats of code.
 
 ## THE FORMAT :balance_scale:
 
-***Jirai*** is a text-markup format inspired by the [Jirai Kei]()
+***Jirai*** is a text-markup format inspired by the [Jirai Kei](https://aesthetics.fandom.com/wiki/Jirai_Kei)
 aesthetic from Japan. It is similar to the Markdown text-markup format.
 ***Jirai*** has block-level elements and some inline-elements that can
 inifintely nest.
@@ -30,10 +30,7 @@ inifintely nest.
 
 - Inline elements:
     - Link: A link is of the following format: `{#[A link to Wikipedia][a link to Wikipedia][https://wikipedia.org]}`. The first string enclosed by square brackets is the text for the `alt` attribute. The second string enclosed by square brackets is the text inside the `a` element. The third string enclosed by square brackets is the URL of the link.
-    - Images: An link to an image is of the following format: `{@[][]}`
-      The first string enclosed by square brackets is the text for the
-      alt attribute. The second string enclosed by square brackets is
-      the link to the image.
+    - Images: An link to an image is of the following format: `{@[][]}` The first string enclosed by square brackets is the text for the alt attribute. The second string enclosed by square brackets is the link to the image.
     - Bold text: Any bold text is enclosed by the `*` characters.
     - Italic text: Any italic text is enclosed by the `$` character.
     - Code: Any inline code is enclosed by angle brackets.
