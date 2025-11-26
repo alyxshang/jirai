@@ -39,6 +39,31 @@ inifintely nest.
 
 ***COMING SOON!***
 
+## JIRAI SAMPLE :ribbon: :black_heart:
+
+```Text
+(^-^)
+<3 $Heading I$
+Lorem ipsum sit dolor amet. Lorem ipsum sit dolor amet.
+
+<3<3 *Heading II*
+Lorem ipsum sit dolor amet. Lorem ipsum sit dolor amet. This text
+contains a {#[link][https://alyxshang.boo]}.
+
+<3<3<3 $Heading III$
+This paragraph contains my profile pic.
+{@[my pfp][https://avatars.githubusercontent.com/u/179976644?v=4]}
+
+<3<3 Heading IV
+
+This is a list!
+
+~ List item 1.
+~ List item 2.
+~ List item 3.
+(^-^)
+```
+
 ## CHANGELOG :black_nib:
 
 ### Version 0.1.0
