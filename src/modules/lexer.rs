@@ -25,6 +25,8 @@ pub enum TokenType{
     OpenSquare,
     ImageMarker,
     CloseSquare,
+    OpenBracket,
+    CloseBracket,
     HeadingMarker,
     DocumentLimiter,
 }
@@ -114,7 +116,7 @@ impl Position {
 pub fn is_text(
     sub: &char
 ) -> bool {
-    if "<>3*_()[]{}^-~!?\n\r"
+    if "<>*$()[]{}^-~#@\n\r"
         .to_string()
         .chars()
         .collect::<Vec<char>>()
@@ -304,7 +306,7 @@ pub fn tokenize_string(
                 cursor += 1;
                 column_count += 1;
             }
-            else if chars.get(cursor) == Some(&'_')
+            else if chars.get(cursor) == Some(&'$')
             {
                 result.push(
                     Token::new(
@@ -330,7 +332,7 @@ pub fn tokenize_string(
                 cursor += 1;
                 column_count += 1;
             } 
-            else if chars.get(cursor) == Some(&'?')
+            else if chars.get(cursor) == Some(&'@')
             {
                 result.push(
                     Token::new(
@@ -343,7 +345,7 @@ pub fn tokenize_string(
                 cursor += 1;
                 column_count += 1;
             }
-            else if chars.get(cursor) == Some(&'!')
+            else if chars.get(cursor) == Some(&'#')
             {
                 result.push(
                     Token::new(
@@ -399,11 +401,38 @@ pub fn tokenize_string(
                 column_count += 2;
                 line_count += 1;
             }
+            else if chars.get(cursor) == Some(&'(')
+            {
+                result.push(
+                    Token::new(
+                        &Position::new(&line_count, &(column_count + 1)),
+                        &Position::new(&line_count, &column_count),
+                        &TokenType::OpenBracket,
+                        &None
+                    )
+                );
+                cursor += 1;
+                column_count += 1;
+            }
+            else if chars.get(cursor) == Some(&')')
+            {
+                result.push(
+                    Token::new(
+                        &Position::new(&line_count, &(column_count + 1)),
+                        &Position::new(&line_count, &column_count),
+                        &TokenType::CloseBracket,
+                        &None
+                    )
+                );
+                cursor += 1;
+                column_count += 1;
+            }
             else {
                 let e: String = format!(
-                    "Unexpected character(s) at position \"{}:{}\"!", 
+                    "Unexpected character(s) at position \"{}:{}\": \"{}\"!", 
                     &line_count, 
-                    &column_count
+                    &column_count,
+                    &chars[cursor]
                 );
                 return Err::<Vec<Token>, JiraiErr>(
                     JiraiErr::new(&e.to_string())
