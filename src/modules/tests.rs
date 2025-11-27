@@ -39,6 +39,12 @@ use std::fs::read_to_string;
 /// Jirai source code can contain.
 use super::parser::Statement;
 
+/// Importing the enum
+/// to sepcify which type
+/// of source string was 
+/// received.
+use super::parser::SourceType;
+
 /// Importing the function to
 /// tokenize a string of Jirai
 /// source code.
@@ -427,7 +433,7 @@ pub fn test_lexer(){
 
 // A function to test the
 // Jirai parser.
-/*#[test]
+#[test]
 pub fn test_parser(){
     let mut example_home: PathBuf = PathBuf::new();
     example_home.push(env!("CARGO_MANIFEST_DIR"));
@@ -436,11 +442,11 @@ pub fn test_parser(){
         .expect("Could not read file contents.");
     let tokens: Vec<Token> = tokenize_string(&sample_code)
         .expect("Could not tokenize sample string.");
-    let mut parser: Parser = Parser::new(&tokens)
+    let mut parser: Parser = Parser::new(&SourceType::Document, &tokens)
         .expect("Could not create parser.");
     let statements: Vec<Statement> = parser.parse()
         .expect("Could not parse heading string.");
     for statement in statements{
-        println!("{:?)", statement);
-    )
-)*/
+        println!("{:?}", statement);
+    }
+}

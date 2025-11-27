@@ -17,6 +17,16 @@ use super::err::JiraiErr;
 /// Jirai tokens.
 use super::lexer::TokenType;
 
+/// An enumeration
+/// describing which
+/// type of Jirai string
+/// was received.
+#[derive(Clone, PartialEq)]
+pub enum SourceType{
+    Slice,
+    Document
+}
+
 /// An enumeration containing
 /// every single type of block
 /// element in Jirai source code.
@@ -71,6 +81,7 @@ pub struct Image{
 pub struct Parser{
     pub cursor: usize,
     pub stream: Vec<Token>,
+    pub source_type: SourceType
 }
 impl Parser {
 
@@ -79,6 +90,7 @@ impl Parser {
     /// it. If the stream of tokens is empty,
     /// an error is returned instead.
     pub fn new(
+        source_type: &SourceType,
         stream: &Vec<Token>
     ) -> Result<Parser, JiraiErr> {
         if stream.len() == 0{
@@ -90,7 +102,8 @@ impl Parser {
             Ok(
                 Parser {
                     cursor: 0,
-                    stream: stream.clone()
+                    stream: stream.clone(),
+                    source_type: source_type.clone()
                 }
             )
         }
@@ -171,6 +184,34 @@ impl Parser {
             )
         }
     }
+
+    /// A function to check whether the stream
+    /// of tokens starts with the `DocumentLimiter`
+    /// type of token. A boolean reflecting this
+    /// is returned.
+    pub fn starts_with(
+        &mut self
+    ) -> bool {
+        match self.stream.get(0){
+            Some(token) => token.token_type == TokenType::DocumentLimiter,
+            None => false
+        }
+    }
+
+    /// A function to check whether the stream
+    /// of tokens ends with the `DocumentLimiter`
+    /// type of token. A boolean reflecting this
+    /// is returned.
+    pub fn ends_with(
+        &mut self
+    ) -> bool {
+        let last_idx: usize = self.stream.len() - 1;
+        match self.stream.get(last_idx){
+            Some(token) => token.token_type == TokenType::DocumentLimiter,
+            None => false
+        }
+    }
+
 
     /// The main function to parse the token stream.
     /// If the operation is successful, a stream of
@@ -289,6 +330,12 @@ impl Parser {
         }
         Ok(Statement::UnorderedList(stmt_vec))
     }
+
+    /// A function to parse an inline block element.
+    /// If the operation is successful, a variant 
+    /// of the `InlineStatement` enumeration is 
+    /// returned. If the operation
+    /// fails, an error is returned.
     pub fn parse_inline_statement(
         &mut self
     ) -> Result<InlineStatement, JiraiErr>{
@@ -299,6 +346,7 @@ impl Parser {
             TokenType::OpenAngle => Ok(self.parse_inline_code()?),
             TokenType::OpenCurly => Ok(self.parse_linked_item()?),
             TokenType::ItalicText => Ok(self.parse_italic_text()?),
+            TokenType::CloseAngle => Ok(self.parse_block_quote()?),
             _ => Ok(self.parse_text()?)
         }
     }
