@@ -108,7 +108,7 @@ This is a list!
 - [x] Implemented a Javascript generator.
 - [ ] Fix the `<3` bug.
 - [ ] Fix the unclosed-delimiter bug.
-- [ ] Extensive testing.
+- [ ] More stringent unit tests.
 
 ## NOTE :scroll:
 
