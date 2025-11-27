@@ -15,6 +15,13 @@ pub mod ir;
 /// to catch and handle errors.
 pub mod err;
 
+/// Exporting the module
+/// containing entities 
+/// to generate HTML code
+/// from the AST received
+/// from the Jirai parser.
+pub mod html;
+
 /// Exporting the module containing
 /// entities to tokenize a string 
 /// of Jirai source code.

@@ -11,6 +11,13 @@ pub mod modules;
 /// containing the structure
 /// to catch and handle errors.
 pub use modules::err::*;
+
+/// Re-exporting the module
+/// containing entities 
+/// to generate HTML code
+/// from the AST received
+/// from the Jirai parser.
+pub use modules::html::*;
  
 /// Re-exporting the module containing
 /// entities to tokenize a string 

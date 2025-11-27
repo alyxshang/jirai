@@ -32,9 +32,9 @@ pub enum SourceType{
 /// element in Jirai source code.
 /// Each variant can contain any
 /// number of sub-statements
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum Statement{
-    Heading(Vec<InlineStatement>),
+    Heading(usize, Vec<InlineStatement>),
     Paragraph(Vec<InlineStatement>),
     UnorderedList(Vec<InlineStatement>)
 }
@@ -46,7 +46,7 @@ pub enum Statement{
 /// variants represent terminals,
 /// whereas others represent 
 /// non-terminals.
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum InlineStatement{
     Link(Link),
     Code(String),
@@ -60,7 +60,7 @@ pub enum InlineStatement{
 
 /// A structure to encapsulate
 /// information on a parsed link.
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Link{
     pub alt: Option<String>,
     pub url: String,
@@ -69,7 +69,7 @@ pub struct Link{
 
 /// A structure to encapsulate
 /// information on a parsed image.
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Image{
     pub alt: Option<String>,
     pub url: String,
@@ -83,6 +83,10 @@ pub struct Parser{
     pub stream: Vec<Token>,
     pub source_type: SourceType
 }
+
+/// Implementing functions
+/// for the `Parser`
+/// structure.
 impl Parser {
 
     /// A function to create a new instance
@@ -270,7 +274,7 @@ impl Parser {
                     stmt_vec.push(self.parse_inline_statement()?);
                 }
             }
-            Ok(Statement::Heading(stmt_vec))
+            Ok(Statement::Heading(level, stmt_vec))
         }
     }
 
