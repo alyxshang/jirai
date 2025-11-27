@@ -105,7 +105,6 @@ This is a list!
 - [x] Implemented a lexer.
 - [x] Implemented a parser.
 - [x] Implemented a HTML generator.
-- [x] Implemented a Javascript generator.
 - [ ] Fix the `<3` bug.
 - [ ] Fix the unclosed-delimiter bug.
 - [ ] More stringent unit tests.
