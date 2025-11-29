@@ -20,7 +20,12 @@ use super::lexer::TokenType;
 /// An enumeration
 /// describing which
 /// type of Jirai string
-/// was received.
+/// was received. A `Slice`
+/// is a simple string of
+/// Jirai source code without
+/// having the `DocumentLimiter`
+/// token as the first and last
+/// token.
 #[derive(Clone, PartialEq)]
 pub enum SourceType{
     Slice,
@@ -77,7 +82,12 @@ pub struct Image{
 
 /// A structure to hold a stream
 /// of tokens lexed from Jirai source
-/// code and 
+/// code and a cursor keeping track of
+/// the current position in that token
+/// stream. A `source_type` field is
+/// also included to "decide" on whether
+/// the `DocumentLimiter` type of token
+/// should be respected or not.
 pub struct Parser{
     pub cursor: usize,
     pub stream: Vec<Token>,

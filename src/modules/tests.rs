@@ -39,6 +39,11 @@ use std::fs::read_to_string;
 /// Jirai source code can contain.
 use super::parser::Statement;
 
+/// Importing the function to
+/// generate HTML code from
+/// Jirai source code.
+use super::compiler::to_html;
+
 /// Importing the enum
 /// to sepcify which type
 /// of source string was 
@@ -49,6 +54,12 @@ use super::parser::SourceType;
 /// tokenize a string of Jirai
 /// source code.
 use super::lexer::tokenize_string;
+
+/// Importing the structure that
+/// takes an AST from parsed Jirai
+/// source code and generates HTML
+/// code from this.
+use super::html::HTMLCodeGenerator;
 
 /// A function to test the 
 /// Jirai tokenizer.
@@ -431,8 +442,8 @@ pub fn test_lexer(){
     assert_eq!(tokens, expected);
 }
 
-// A function to test the
-// Jirai parser.
+/// A function to test the
+/// Jirai parser.
 #[test]
 pub fn test_parser(){
     let mut example_home: PathBuf = PathBuf::new();
@@ -449,4 +460,20 @@ pub fn test_parser(){
     for statement in statements{
         println!("{:?}", statement);
     }
+}
+
+/// The function to test the 
+/// functionality of the 
+/// `HTMLCodeGenerator` structure.
+#[test]
+pub fn test_html_generator(){
+}
+
+/// The function to test all functions
+/// inside the compiler module that
+/// compile Jirai source code into other
+/// formats of code.
+#[test]
+pub fn test_compiler(){
+
 }

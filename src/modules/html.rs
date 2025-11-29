@@ -36,6 +36,7 @@ use super::parser::InlineStatement;
 pub struct HTMLCodeGenerator{
     pub minify: bool,
     pub cursor: usize,
+    pub alt_enforcing: bool,
     pub statements: Vec<Statement>
 }
 
@@ -51,6 +52,7 @@ impl HTMLCodeGenerator{
     /// is returned.
     pub fn new(
         minify: &bool,
+        alt_enforcing: &bool,
         ast: &Vec<Statement>
     ) -> Result<HTMLCodeGenerator, JiraiErr>{
         if ast.len() == 0{
@@ -62,6 +64,7 @@ impl HTMLCodeGenerator{
             Ok(HTMLCodeGenerator{
                 cursor: 0,
                 minify: *minify,
+                alt_enforcing: *alt_enforcing,
                 statements: ast.to_vec()
             })
         }
@@ -103,7 +106,8 @@ impl HTMLCodeGenerator{
 
     /// This function generates HTML code
     /// from the statements inside the AST
-    /// and returns it.
+    /// and returns it. If the operation fails,
+    /// an error is returned.
     pub fn generate(
         &mut self
     ) -> Result<String, JiraiErr> {
@@ -112,11 +116,11 @@ impl HTMLCodeGenerator{
             let current: Statement = self.current()?;
             match current {
                 Statement::Paragraph(i_statements) => lines.push(
-                    self.generate_paragraph_code(&i_statements)),
+                    self.generate_paragraph_code(&i_statements)?),
                 Statement::UnorderedList(i_statements) => lines.push(
-                    self.generate_unordered_list_code(&i_statements)),
+                    self.generate_unordered_list_code(&i_statements)?),
                 Statement::Heading(level, i_statements) => lines.push(
-                    self.generate_heading_code(&level, &i_statements))
+                    self.generate_heading_code(&level, &i_statements)?)
             };
         }
         if self.minify{
@@ -127,14 +131,18 @@ impl HTMLCodeGenerator{
         }
     }
 
+    /// The function to generate the HTML code
+    /// for a heading and nested elements 
+    /// and return it. If the operation fails, an 
+    /// error is returned.
     pub fn generate_heading_code(
         &mut self,
         level: &usize,
         inline_statements: &Vec<InlineStatement>
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         let mut lines: Vec<String> = Vec::new();
         for i_statement in inline_statements{
-            lines.push(self.generate_inline_statement(&i_statement));
+            lines.push(self.generate_inline_statement(&i_statement)?);
         }
         let joined: String;
         if self.minify{
@@ -143,16 +151,20 @@ impl HTMLCodeGenerator{
         else {
             joined = lines.join("\n");
         }
-        format!("<h{}>{}</h{}>", level, joined, level)
+        Ok(format!("<h{}>{}</h{}>", level, joined, level))
     }
 
+    /// The function to generate the HTML code
+    /// for a paragraph and nested elements 
+    /// and return it. If the operation fails, an 
+    /// error is returned.
     pub fn generate_paragraph_code(
         &mut self,
         inline_statements: &Vec<InlineStatement>
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         let mut lines: Vec<String> = Vec::new();
         for i_statement in inline_statements{
-            lines.push(self.generate_inline_statement(&i_statement));
+            lines.push(self.generate_inline_statement(&i_statement)?);
         }
         let joined: String;
         if self.minify{
@@ -161,16 +173,20 @@ impl HTMLCodeGenerator{
         else {
             joined = lines.join("\n");
         }
-        format!("<p>{}</p>", joined)
+        Ok(format!("<p>{}</p>", joined))
     }
 
+    /// The function to generate the HTML code
+    /// for an unordered list and nested elements 
+    /// and return it. If the operation fails, an 
+    /// error is returned.
     pub fn generate_unordered_list_code(
         &mut self,
         inline_statements: &Vec<InlineStatement>
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         let mut lines: Vec<String> = Vec::new();
         for i_statement in inline_statements{
-            lines.push(self.generate_inline_statement(&i_statement));
+            lines.push(self.generate_inline_statement(&i_statement)?);
         }
         let joined: String;
         if self.minify{
@@ -179,61 +195,109 @@ impl HTMLCodeGenerator{
         else {
             joined = lines.join("\n");
         }
-        format!("<ul>{}</ul>", joined)
+        Ok(format!("<ul>{}</ul>", joined))
     }
 
+    /// The function to generate the HTML code
+    /// for an inline element and nested elements 
+    /// and return it. If the operation fails, an 
+    /// error is returned.
     pub fn generate_inline_statement(
         &mut self,
         inline_statement: &InlineStatement
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         match inline_statement{
-            InlineStatement::Text(text) => text.to_string(),
-            InlineStatement::Code(code) => self.generate_code_code(&code),
-            InlineStatement::Link(link) => self.generate_link_code(&link),
-            InlineStatement::Image(image) => self.generate_image_code(&image),
-            InlineStatement::BoldText(nested) => self.generate_italic_code(&nested),
-            InlineStatement::ItalicText(nested) => self.generate_italic_code(&nested),
-            InlineStatement::ListItem(nested) => self.generate_list_item_code(&nested),
-            InlineStatement::BlockQuote(quote) => self.generate_block_quote_code(&quote)
+            InlineStatement::Text(text) => Ok(text.to_string()),
+            InlineStatement::Code(code) => Ok(self.generate_code_code(&code)),
+            InlineStatement::Link(link) => Ok(self.generate_link_code(&link)?),
+            InlineStatement::Image(image) => Ok(self.generate_image_code(&image)?),
+            InlineStatement::BoldText(nested) => Ok(self.generate_italic_code(&nested)?),
+            InlineStatement::ItalicText(nested) => Ok(self.generate_italic_code(&nested)?),
+            InlineStatement::ListItem(nested) => Ok(self.generate_list_item_code(&nested)?),
+            InlineStatement::BlockQuote(quote) => Ok(self.generate_block_quote_code(&quote))
         }
     }
 
+    /// The function to generate the HTML code
+    /// for an inline image and return it. If the
+    /// operation fails, an error is returned.
     pub fn generate_image_code(
         &mut self,
         image: &Image
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         match &image.alt{
-            Some(alt_text) => format!(
-                "<img alt=\"{}\" src=\"{}\"/>", 
-                alt_text, 
-                image.url
+            Some(alt_text) => Ok(
+                format!(
+                    "<img alt=\"{}\" src=\"{}\"/>", 
+                    alt_text, 
+                    image.url
+                )
             ),
-            None => format!(
-                "<img src=\"{}\"/>",
-                image.url
-            )
+            None => {
+                if self.alt_enforcing{
+                    Err::<String, JiraiErr>(
+                        JiraiErr::new(
+                            &format!(
+                                "No \"alt\" text supplied to image \"{}\"!",
+                                &image.url
+                            )
+                        )
+                    )
+                }
+                else{
+                    Ok(
+                        format!(
+                            "<img src=\"{}\"/>",
+                            image.url
+                        )
+                    )
+                }
+            }
         }
     }
 
+    /// The function to generate the HTML code
+    /// for an inline link and return it. If the
+    /// operation fails, an error is returned.
     pub fn generate_link_code(
         &mut self,
         link: &Link
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         match &link.alt{
-            Some(alt_text) => format!(
-                "<a alt=\"{}\" href=\"{}\">{}</a>", 
-                alt_text, 
-                link.url,
-                link.link_text
+            Some(alt_text) => Ok(
+                format!(
+                    "<a alt=\"{}\" href=\"{}\">{}</a>", 
+                    alt_text, 
+                    link.url,
+                    link.link_text
+                )
             ),
-            None => format!(
-                "<a href=\"{}\">{}</a>", 
-                link.url,
-                link.link_text
-            )
+            None => {
+                if self.alt_enforcing{
+                    Err::<String, JiraiErr>(
+                        JiraiErr::new(
+                            &format!(
+                                "No \"alt\" text supplied to link \"{}\"!",
+                                &link.url
+                            )
+                        )
+                    )
+                }
+                else {
+                    Ok(
+                        format!(
+                            "<a href=\"{}\">{}</a>", 
+                            link.url,
+                            link.link_text
+                        )
+                    )
+                }
+            }   
         }
     }
 
+    /// The function to generate the HTML code
+    /// for inline code and return it. 
     pub fn generate_code_code(
         &mut self,
         code: &str
@@ -241,6 +305,8 @@ impl HTMLCodeGenerator{
         format!("<code>{}</code>", code)
     }
 
+    /// The function to generate the HTML code
+    /// for block quote and return it. 
     pub fn generate_block_quote_code(
         &mut self,
         quote: &str
@@ -248,13 +314,15 @@ impl HTMLCodeGenerator{
         format!("<blockquote>{}</blockquote>", quote)
     }
 
+    /// The function to generate the HTML code
+    /// for italic text and return it. 
     pub fn generate_italic_code(
         &mut self,
         inline_statements: &Vec<InlineStatement>
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         let mut lines: Vec<String> = Vec::new();
         for inline_statement in inline_statements {
-            lines.push(self.generate_inline_statement(&inline_statement));
+            lines.push(self.generate_inline_statement(&inline_statement)?);
         }
         let joined: String;
         if self.minify{
@@ -263,16 +331,18 @@ impl HTMLCodeGenerator{
         else {
             joined = lines.join("\n");
         }
-        format!("<i>{}</i>", joined)
+        Ok(format!("<i>{}</i>", joined))
     }
 
+    /// The function to generate the HTML code
+    /// for bold text and return it. 
     pub fn generate_bold_code(
         &mut self,
         inline_statements: &Vec<InlineStatement>
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         let mut lines: Vec<String> = Vec::new();
         for inline_statement in inline_statements {
-            lines.push(self.generate_inline_statement(&inline_statement));
+            lines.push(self.generate_inline_statement(&inline_statement)?);
         }
         let joined: String;
         if self.minify{
@@ -281,16 +351,18 @@ impl HTMLCodeGenerator{
         else {
             joined = lines.join("\n");
         }
-        format!("<b>{}</b>", joined)
+        Ok(format!("<b>{}</b>", joined))
     }
 
+    /// The function to generate the HTML code
+    /// for a list item and return it. 
     pub fn generate_list_item_code(
         &mut self,
         inline_statements: &Vec<InlineStatement>
-    ) -> String {
+    ) -> Result<String, JiraiErr> {
         let mut lines: Vec<String> = Vec::new();
         for inline_statement in inline_statements {
-            lines.push(self.generate_inline_statement(&inline_statement));
+            lines.push(self.generate_inline_statement(&inline_statement)?);
         }
         let joined: String;
         if self.minify{
@@ -299,9 +371,6 @@ impl HTMLCodeGenerator{
         else {
             joined = lines.join("\n");
         }
-        format!("<li>{}</li>", joined)
+        Ok(format!("<li>{}</li>", joined))
     }
-
-
-
 }

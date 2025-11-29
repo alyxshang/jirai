@@ -61,6 +61,7 @@ pub fn to_html(
     let parsed: Vec<Statement> = parser.parse()?;
     let mut code_generator: HTMLCodeGenerator = HTMLCodeGenerator::new(
         minify,
+        alt_enforcing,
         &parsed
     )?;
     let generated: String = code_generator.generate()?;
