@@ -29,3 +29,10 @@ pub use modules::lexer::*;
 /// tokens obtained from Jirai
 /// source code.
 pub use modules::parser::*;
+
+/// Re-exporting the module
+/// containing functions
+/// to compile Jirai source
+/// into other formats of
+/// code.
+pub use modules::compiler::*;

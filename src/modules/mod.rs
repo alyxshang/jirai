@@ -38,3 +38,10 @@ pub mod tests;
 /// tokens obtained from Jirai
 /// source code.
 pub mod parser;
+
+/// Exporting the module
+/// containing functions
+/// to compile Jirai source
+/// into other formats of
+/// code.
+pub mod compiler;
