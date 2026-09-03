@@ -30,7 +30,7 @@ use super::compiler::compile_file;
 pub fn cli() -> Result<String, JiraiErr>{
     let mut app: App = App::new(
         "Jirai Compiler",
-        "0.3.0"
+        "0.1.0"
     );
     app.add_arg("lint", &true, "lints a Jirai file")?;
     app.add_arg("build", &true, "compiles a Jirai file")?;
