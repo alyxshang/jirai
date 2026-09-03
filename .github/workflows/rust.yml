@@ -1,0 +1,29 @@
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: actions/checkout@v6
+      
+      - name: "Run unit tests."
+        uses: actions-rs/cargo@v1
+        with: 
+          command: test
+          args: --features=ejirai,cli
+
+      - name: "Clean \"sample\" directory."
+        run: rm -rf sample/*.html
+
+      - name: "Run linter."
+        uses: actions-rs/cargo@v1
+        with: 
+          command: clippy
+          args: --features=ejirai,cli
+
+      - name: "Run a compilation."
+        uses:  actions-rs/cargo@v1
+        with:
+          command: run
+          args: --features=cli -- --build sample/sample.jirai
+

@@ -1,0 +1,31 @@
+[package]
+name = "jirai"
+version = "0.1.0"
+edition = "2024"
+author = ["Alyx Shang <alyxshang@alyxshang.boo>"]
+license-file = "LICENSE"
+readme = "README.markdown"
+description= "A compiler for a markup language inspired by Jirai Kei."
+homepage = "https://github.com/alyxshang/jirai"
+repository = "https://github.com/alyxshang/jirai"
+
+[dependencies]
+serde = { version = "1.0.228", features = ["derive"], optional = true }
+jmu = { git = "https://github.com/alyxshang/jmu", tag = "v.0.1.0", optional = true }
+yue = { git = "https://github.com/alyxshang/yue", tag = "v.0.1.0", optional = true }
+
+[features]
+cli = ["yue"]
+ejirai = ["serde", "jmu"]
+
+[[bin]]
+name = "jiraic"
+path = "src/main.rs"
+required-features = ["cli"]
+
+[profile.release]
+lto = true
+strip = true
+panic = "abort"
+opt-level = "z"
+codegen-units = 1
