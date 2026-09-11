@@ -14,7 +14,7 @@ external libraries. These libraries are: [JMU](https://github.com/alyxshang/jmu)
 
 ## SPECIFICATION
 
-A specification of the Jirai Language can be found [here](https://alyxshang.boo/jirai).
+A specification of the Jirai Language can be found [here](https://alyxshang.boo/specs/jirai).
 
 ## USAGE
 
@@ -168,4 +168,4 @@ from the root of the repository.
 ## NOTE
 
 - *Jirai* by *Alyx Shang*.
-- Licensed under the [FSL v1](https://alyxshang.boo/fair-software-license).
+- Licensed under the [FSL v1](https://alyxshang.boo/content/fair-software-license).
