@@ -13,7 +13,9 @@ jobs:
           args: --features=ejirai,cli
 
       - name: "Clean \"sample\" directory."
-        run: rm -rf sample/*.html
+        run: |
+          cat sample/*.html
+          rm -rf sample/*.html
 
       - name: "Run linter."
         uses: actions-rs/cargo@v1
@@ -26,4 +28,3 @@ jobs:
         with:
           command: run
           args: --features=cli -- --build sample/sample.jirai
-
