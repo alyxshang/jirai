@@ -2,7 +2,7 @@
 
 ![Jirai CI](https://github.com/alyxshang/jirai/actions/workflows/rust.yml/badge.svg)
 
-***A compiler for a markup language inspired by Jirai Kei.***
+***A compiler for a text markup language with a syntax inspired by Jirai Kei internet slang.***
 
 ## ABOUT
 
