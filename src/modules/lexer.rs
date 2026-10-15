@@ -8,6 +8,12 @@ Licensed under the FSL v1.
 /// and handle errors.
 use super::err::JiraiErr;
 
+/// Importing the structure 
+/// to record the position 
+/// of a character
+/// in source code.
+use super::position::Position;
+
 /// An enumeration "listing"
 /// all possible types of tokens
 /// a Jirai document can contain.
@@ -28,15 +34,6 @@ pub enum TokenType {
     OpenBracket,
     CloseBracket,
     HeadingMarker,
-}
-
-/// A data structure to encapsulate
-/// data about where a token starts
-/// and ends.
-#[derive(Debug, Clone, PartialEq)]
-pub struct Position {
-    pub line: usize,
-    pub column: usize
 }
 
 /// A data structure to encapsulate

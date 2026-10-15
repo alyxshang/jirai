@@ -167,7 +167,8 @@ from the root of the repository.
 
 ### Version 0.2.0
 
-- Changed the implementation such that paragraphs are terminated by two newline characters.
+- The `Position` structure was exported to its own module.
+- More verbose error messages with exact position information.
 
 ## NOTE
 

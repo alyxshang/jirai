@@ -50,6 +50,12 @@ pub mod parser;
 pub mod ejirai;
 
 /// Exporting the module
+/// containing the structure
+/// to record position info
+/// on a character.
+pub mod position;
+
+/// Exporting the module
 /// containing functions
 /// to compile Jirai into
 /// one or more formats.

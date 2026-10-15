@@ -54,6 +54,12 @@ pub use modules::parser::*;
 pub use modules::ejirai::*;
 
 /// Re-exporting the module
+/// containing the structure
+/// to record position info
+/// on a character.
+pub use modules::position::*;
+
+/// Re-exporting the module
 /// containing functions
 /// to compile Jirai into
 /// different formats.
