@@ -149,8 +149,10 @@ impl Parser {
         }
         else {
             let e: String = format!(
-                "Expected a token of type \"{:?}\"!",
-                token_type
+                "Expected a token of type \"{:?}\" at position \"{:?}:{:?}\"!",
+                token_type,
+                peeked.start.line,
+                peeked.start.column
             );
             Err::<Token, JiraiErr>(
                 JiraiErr::new(&e.to_string())
@@ -215,7 +217,13 @@ impl Parser {
         }
         if level == 0{
             Err::<BlockStatement, JiraiErr>(
-                JiraiErr::new("Expected a heading marker.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected a heading marker at position \"{:?}:{:?}\"!",
+                        self.peek_n(&0)?.start.line,
+                        self.peek_n(&0)?.start.column,
+                    )
+                )
             )
         }
         else {
@@ -281,7 +289,15 @@ impl Parser {
             };
         }
         if stmt_buf.is_empty() {
-            Err(JiraiErr::new("Empty paragraph."))
+            Err(
+                JiraiErr::new(
+                    &format!(
+                        "Empty paragraph at position \"{:?}:{:?}\"!",
+                        self.peek_n(&0)?.start.line,
+                        self.peek_n(&0)?.start.column
+                    )
+                )
+            )
         }
         else {
             Ok(BlockStatement::Paragraph(stmt_buf))
@@ -305,7 +321,13 @@ impl Parser {
             TokenType::ItalicText => Ok(self.parse_italic_text()?),
             TokenType::CloseAngle => Ok(self.parse_linked_item()?),
             _ => Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected an inline element.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected an inline element at position \"{:?}:{:?}\"!",
+                        peeked.start.line,
+                        peeked.start.column
+                    )
+                )
             )
         }
     }
@@ -336,7 +358,13 @@ impl Parser {
         }
         else {
             Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected a linked item.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected a linked element at position \"{:?}:{:?}\"!",
+                        type_marker.start.line,
+                        type_marker.start.column
+                    )
+                )
             )
         }
     }
@@ -433,13 +461,25 @@ impl Parser {
         let alt_text: String = match alt_text_token.value{
             Some(alt_text) => alt_text,
             None => return Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected \"alt\" text.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected a \"alt\" at position \"{:?}:{:?}\"!",
+                        alt_text_token.start.line,
+                        alt_text_token.start.column
+                    )
+                )
             )
         };
         let url: String = match link_url_token.value{
             Some(url) => url,
             None => return Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected a URL.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected a URL at position \"{:?}:{:?}\"!",
+                        alt_text_token.start.line,
+                        alt_text_token.start.column
+                    )
+                )
             )
         };
         Ok(AtomicStatement::ImageLink(alt_text, url))
@@ -471,19 +511,37 @@ impl Parser {
         let alt_text: String = match alt_text_token.value{
             Some(alt_text) => alt_text,
             None => return Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected \"alt\" text.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected a \"alt\" at position \"{:?}:{:?}\"!",
+                        alt_text_token.start.line,
+                        alt_text_token.start.column
+                    )
+                )
             )
         };
         let link_text: String = match link_text_token.value{
             Some(link_text) => link_text,
             None => return Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected link text.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected link text position \"{:?}:{:?}\"!",
+                        link_text_token.start.line,
+                        link_text_token.start.column
+                    )
+                )
             )
         };
         let url: String = match link_url_token.value{
             Some(url) => url,
             None => return Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected a URL.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected a URL position \"{:?}:{:?}\"!",
+                        link_url_token.start.line,
+                        link_url_token.start.column
+                    )
+                )
             )
         };
         Ok(AtomicStatement::Link(alt_text, link_text, url))
@@ -502,7 +560,13 @@ impl Parser {
         let text: String = match text_token.value{
             Some(text) => text,
             None => return Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected link text.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected text at position \"{:?}:{:?}\"!",
+                        text_token.start.line,
+                        text_token.start.column
+                    )
+                )
             )
         };
         Ok(AtomicStatement::Text(text))
@@ -523,7 +587,13 @@ impl Parser {
         let code: String = match code_text_token.value{
             Some(code) => code,
             None => return Err::<AtomicStatement, JiraiErr>(
-                JiraiErr::new("Expected code.")
+                JiraiErr::new(
+                    &format!(
+                        "Expected code at position \"{:?}:{:?}\"!",
+                        code_text_token.start.line,
+                        code_text_token.start.column
+                    )
+                )
             )
         };
         Ok(AtomicStatement::InlineCode(code))

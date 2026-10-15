@@ -186,7 +186,12 @@ impl HTMLGenerator{
                     self.generate_atomic_code(a_stmt)
                 ),
                 _ => return Err::<String, JiraiErr>(
-                    JiraiErr::new("Unexpected statement type.")
+                    JiraiErr::new(
+                        &format!(
+                            "Unexpected statement type. Received: \"{:?}\"!",
+                            a_stmt
+                        )
+                    )
                 )
             };
         }

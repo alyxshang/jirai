@@ -23,7 +23,7 @@ A specification of the Jirai Language can be found [here](https://alyxshang.boo/
 The Jirai compiler can be installed using Cargo with the following command:
 
 ```bash
-cargo install --git https://github.com/alyxshang/jirai --tag v.0.1.0 --features=cli
+cargo install --git https://github.com/alyxshang/jirai --tag v.0.2.0 --features=cli
 ```
 
 The compiler's CLI offers the following options:
@@ -42,7 +42,7 @@ text written in the ***Jirai*** format into HTML, add the following
 line to the `dependencies` section of your project's `Cargo.toml`:
 
 ```TOML
-jirai = { git = "https://github.com/alyxshang/jirai", tag = "v.0.1.0" }
+jirai = { git = "https://github.com/alyxshang/jirai", tag = "v.0.2.0" }
 ```
 
 If you want to use the `ejirai` feature this crate offers, you would add
@@ -164,6 +164,10 @@ from the root of the repository.
 
 - Initial release.
 - Initial upload to GitHub.
+
+### Version 0.2.0
+
+- Changed the implementation such that paragraphs are terminated by two newline characters.
 
 ## NOTE
 

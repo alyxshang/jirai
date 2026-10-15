@@ -108,19 +108,34 @@ pub fn compile_file_auto(
     let mut parent: PathBuf = match file_buf.parent(){
         Some(parent) => parent.to_path_buf(),
         None => return Err::<(), JiraiErr>(
-            JiraiErr::new("Could not get parent directory.")
+            JiraiErr::new(
+                &format!(
+                    "Could not get parent directory for subject \"{}\"!",
+                    sub
+                )
+            )
         )
     };
     let file_stem_os_str: Option<&str> = match file_buf.file_stem(){
         Some(file_stem_os_str) => file_stem_os_str.to_str(),
         None => return Err::<(), JiraiErr>(
-            JiraiErr::new("Could not get file stem format.")
+            JiraiErr::new(
+                &format!(
+                    "Could not get base stem for subject \"{}\"!",
+                    sub
+                )
+            )
         )
     };
     let file_stem: String = match file_stem_os_str{
         Some(file_stem) => file_stem.to_string(),
         None => return Err::<(), JiraiErr>(
-            JiraiErr::new("Could not get file stem.")
+            JiraiErr::new(
+                &format!(
+                    "Could not get file stem for subject \"{}\"!",
+                    sub
+                )
+            )
         )
     };
     let html_file_name: String = format!("{}.html", file_stem);
