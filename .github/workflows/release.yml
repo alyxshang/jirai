@@ -1,0 +1,53 @@
+on: 
+ push:
+    tags:
+      - '*'
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+          - os: macos-latest
+            target: x86_64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: "Run a \"release\" build."
+        run: cargo build --features=cli --release --target ${{ matrix.target }}
+
+      - name: "Rename Windows binary."
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        run: cp target/${{ matrix.target }}/release/jiraic.exe jiraic-${{ matrix.target }}.exe
+
+      - name: "Rename Linux/Mac OS binary."
+        if: matrix.target != 'x86_64-pc-windows-msvc'
+        run: mv target/${{ matrix.target }}/release/jiraic jiraic-${{ matrix.target }}
+
+      - name: "Upload release artifact for Linux/Mac OS."
+        if: matrix.target != 'x86_64-pc-windows-msvc'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: jiraic-${{ matrix.target }}
+
+      - name: "Upload release artifact for Windows."
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: jiraic-${{ matrix.target }}.exe
